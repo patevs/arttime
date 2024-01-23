@@ -24,7 +24,7 @@ Contents
 # arttime
 Beauty of text-art meets functionality of a feature-rich clock / timer / pattern-based time manager in terminal. In addition to its functional/productivity features, ``arttime`` brings curated text-art to otherwise artless terminal emulators of starving developers and other users who can use terminal. It is a cross-platform application with native notifications/sounds that runs well on macOS, Linux, BSD Unixes, and Windows WSL.
 
-Artime is rooted in Unix philosophy. You can also feed keystrokes into it from a file, pipe, string or unrelated process instead of just typing them; control gets cleanly transferred to your keyboard when the respective file, pipe, or string ends.
+Artime is rooted in Unix philosophy. You can also feed keystrokes into it from a file, pipe, string or unrelated process instead of just typing them; control gets cleanly transferred to your keyboard when the respective file, pipe, or string ends. Among other features, this allows using arttime to display dynamic information like system metrics, weather, stock market feed, and etc using a simple external feeder program.
 
 ## Purpose/features
 - Bring curated text/ascii art to artless terminals, currently 500+ high-quality ASCII, ANSI, PETSCII, Unicode text art to choose from
@@ -46,7 +46,7 @@ Artime is rooted in Unix philosophy. You can also feed keystrokes into it from a
 - For consistent art & message display in multiple applications, a script ``artprint`` is also available in the same directory as ``arttime``.
 - Multiple ways to select text art: 1) random; 2) by name (with completion hints); 3) via [fzf](https://github.com/junegunn/fzf), if it is installed (not required though)
 - Away timer: start arttime or reset (press ``r``) arttime's timers before putting computer to sleep or moving away from screen. Be greeted by a beautiful text art, and know how much time you spent away from computer when you get back to computer again. And no, it doesn't consume power when computer is sleeping.
-- Feed keystrokes from anywhere: Unlike most interactive applications, arttime provides first-class support for feeding keystrokes from all imaginable sources: string, file, pipe, or unrelated process. This enables many exciting features. To begin, press ``k`` from within arttime to see many pre-installed examples, and read more details in [arttime wiki: feed keys from anywhere](https://github.com/poetaman/arttime/wiki#feed-keystrokes-from-anywhere).
+- Feed keystrokes from anywhere: Unlike most interactive applications, arttime provides first-class support for feeding keystrokes from all imaginable sources: string, file, pipe, or unrelated process. This enables many exciting features. To begin, press ``k`` from within arttime to see many pre-installed examples, and read more details in arttime's manual ``$ arttime -m`` and [arttime wiki: feed keys from anywhere](https://github.com/poetaman/arttime/wiki#feed-keystrokes-from-anywhere). Among other features, this allows using arttime to display dynamic information like system metrics, weather, stock market feed, and etc using a simple external feeder program.
 - Expressive timers: Associate different art, color, and message with your timers. This makes your timers more expressive, and personalized. To check preinstalled examples: press ``k``, type ``timer`` and press ``Tab``.
 - History, completion, globbing, search: All prompts store 1000 unique previous values in history, just press ``Up``/``Down`` arrows on the prompt to scroll history. More keybindings listed in arttime wiki: [Modes and keybindings](https://github.com/poetaman/arttime/wiki#modes-and-keybindings)
 - Storyboards: Quickly create an art [storyboard](https://en.wikipedia.org/wiki/Storyboard) by sequencing art from arttime's collection. To check preinstalled examples: press ``k``, type ``story`` (or ``learn``) and press ``Tab``.
@@ -98,11 +98,11 @@ https://user-images.githubusercontent.com/71736629/206934934-25b4632f-ee56-421a-
 
 # Installation
 
-<!--
 There are three installation methods: 1) Simple, 2) Manual, 3) Package manager. As the name suggests, 1) Simple method should be used by users who want a simple install experience (also no password required), 2) Manual method is for users who are fluent in using terminal and want the most customize install experience (check any optional dependencies at [arttime dependencies](https://github.com/poetaman/arttime/wiki#dependencies)), 3) Package manager method automates dependency installation, though mostly requires admin password to install.
--->
 
+<!--
 There are three installation methods: 1) Simple, 2) Manual. As the name suggests, 1) Simple method should be used by users who want a simple install experience (also no password required), 2) Manual method is for users who are fluent in using terminal and want the most customize install experience (check any optional dependencies at [arttime dependencies](https://github.com/poetaman/arttime/wiki#dependencies).
+-->
 
 ---
 
@@ -110,13 +110,13 @@ There are three installation methods: 1) Simple, 2) Manual. As the name suggests
 - Open some "Terminal" application on your computer
 - Copy following line from start to end. *(Note: hovering your computer mouse near the right end of the following box will show a button inside the box, clicking it will copy the line for you. Or else you will have to press and hold to the mouse to scroll and select the entire line from beginning to end, and copy it.)*
 ```
-zsh -c '{url="https://gist.githubusercontent.com/poetaman/bdc598ee607e9767fe33da50e993c650/raw/8487de3cf4cf4a7feff5d3a0d97defad95164eb3/arttime_online_installer.sh"; zsh -c "$(curl -fsSL $url || wget -qO- $url)"}'
+zsh -c '{url="https://gist.githubusercontent.com/poetaman/bdc598ee607e9767fe33da50e993c650/raw/d0146d258a30daacb9aee51deca9410d106e4237/arttime_online_installer.sh"; zsh -c "$(curl -fsSL $url || wget -qO- $url)"}'
 ```
 - Paste the above copied line in "Terminal" application, and press ``Enter``
 - Installer will print any further action you need to take before running it.
 - Type ``arttime`` and press ``Enter``, arttime will launch!
 
-Note: The simple install method installs arttime under ``~/.local``, which is a standard install directory for local installation. It also clones the arttime github repository under ``~/packages/github/poetaman``.
+Note: The simple install method installs arttime under ``~/.local``, which is a standard install directory for local installation.
 
 ---
 
@@ -127,15 +127,22 @@ Note: The simple install method installs arttime under ``~/.local``, which is a 
 - Run ``./install.sh`` with your options of choice
 - Rest is similar to the last 2 steps of simple installer
 
-<!--
+
 ---
 3) Package manager method:
 Arttime might also be available as a package or build receipe in your favorite system distribution.
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/arttime.svg)](https://repology.org/project/arttime/versions)
 
+For Debian, Ubuntu, etc Linuxes that use ``apt``, please download and install latest .deb package: [arttime_2.3.0-1_all.deb](https://github.com/poetaman/arttime/releases/download/v2.3.0/arttime_2.3.0-1_all.deb). Instructions:
+```
+$ mv arttime_2.3.0-1_all.deb /tmp
+$ sudo apt install /tmp/arttime_2.3.0-1_all.deb
+```
+
+
 If you don't see your favorite distribution and would like to volunteer then get in touch. Useful links: [arttime dependencies](https://github.com/poetaman/arttime/wiki#dependencies), [arttime discussions](https://github.com/poetaman/arttime/discussions), [@ehaupt](https://github.com/ehaupt)'s [FreeBSD PR](https://github.com/poetaman/arttime/pull/25)/[FreeBSD port](https://github.com/freebsd/freebsd-ports/commit/7f2f0cc69b9348a6bfcbdbeee5793616628307b4)/[FreeBSD art](https://github.com/poetaman/arttime/pull/25/commits/943fa08cffaa16a59a9aefbfd432467afc65b1c4). Once you have added a package, open a pull request with some representative art like [FreeBSD mascot](https://github.com/poetaman/arttime/pull/25/commits/943fa08cffaa16a59a9aefbfd432467afc65b1c4) to get representation for your favorite distribution/OS (mascots are preferred over logos).
--->
+
 
 ## Try arttime in docker?
 Docker™ being a containerized environment can be a preferred way of trying applications for some geeks. With docker already installed you can give arttime a quick try in a docker container, ***though without arttime's sounds/notifications***. Copy-Paste-Enter the following command in a terminal application after starting [Docker Desktop](https://www.docker.com) on your computer. Note: arttime, its committers or artists don't endorse docker™ in any form or manner. It's presented here only for geeks who know what they are doing and prefer to try it in a container before installing; for everybody else its recommended to jump directly to [Installation](#installation).
@@ -146,9 +153,9 @@ docker run -e TERM -e LC_ALL=C.UTF-8 -e TZ -it --rm zshusers/zsh:5.8 zsh -c '
   export SHELL=$(command -v zsh)
   apt update
   apt install -y curl less
-  curl -fsSL https://gist.githubusercontent.com/poetaman/bdc598ee607e9767fe33da50e993c650/raw/8487de3cf4cf4a7feff5d3a0d97defad95164eb3/arttime_online_installer.sh | TERM=xterm-256color zsh
+  curl -fsSL https://gist.githubusercontent.com/poetaman/bdc598ee607e9767fe33da50e993c650/raw/d0146d258a30daacb9aee51deca9410d106e4237/arttime_online_installer.sh | TERM=xterm-256color zsh
   TERM=xterm-256color ~/.local/bin/arttime
-  echo "Check more at https://github.com/poetaman/arttime"'
+  echo "For more information, please check https://github.com/poetaman/arttime"'
 ```
 
 # Troubleshooting

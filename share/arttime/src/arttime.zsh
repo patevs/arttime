@@ -15,7 +15,7 @@ if ! is-at-least "5.7"; then
     exit 1
 fi
 
-arttime_version="2.1.3"
+arttime_version="2.3.0"
 
 zmodload zsh/zselect
 zmodload zsh/zutil
@@ -94,12 +94,13 @@ fi
 $(printf "$zparseoptscmd") \
    a:=artname_arg \
    b:=flipartname_arg \
-   -random:=random_arg \
+   -random=random_arg \
    t:=title_arg \
    g:=goal_arg \
    k:=keyfile_arg \
    -keypoem:=keyfile_arg \
    h=help_arg \
+   m=man_arg \
    -theme:=theme_arg \
    -tc:=titlecolor_arg \
    -ac:=artcolor_arg \
@@ -113,6 +114,7 @@ $(printf "$zparseoptscmd") \
    -line-editor:=lineeditor_arg \
    -version=version_arg \
    -help=help_arg \
+   -man=man_arg \
    || return
 # NOTE: --line-editor and --debug are "undocumented" options that are not printed by --help
 #   --debug
@@ -135,231 +137,57 @@ fi
 
 function printhelp {
 read -r -d '' VAR <<-'EOF'
-Name:
-    arttime     beauty of text art meets functionality of clock/timer
+Usage:
+    arttime [OPTION]...
 
-Invocation:
-    arttime [OPTIONS]...
-    command_pipe | arttime [OPTIONS]...
-
-Description:
-    arttime brings curated text art to otherwise artless terminal emulators
-    of starving developers, and others who can use a terminal.
-    While doing so, it blends display of art with functionality of a nifty
-    clock/timer/time-manager which is a retake on stereotypical alarms/timers.
-    With one line of title message under the art, it also provides one line of
-    opportunity for developers to display their activism (not-so-techie thing)
-    or just attach a functional message for themselves for usual developer
-    activity on terminal (like "debug the failing build tonight").
-
-    Animation: Some great ascii artists of web 1.0 era have produced text
-    art that when displayed one after another creates an illusion of motion.
-    To support their vision, arttime can be passed two art files (called
-    "a-art", and "b-art") that it flip-flops displaying every second.
-    A current restriction is that both pieces of art must be of same height,
-    or else only "a-art" is displayed.
-
-    Artscript: Arttime can be "scripted" by feeding keystrokes into it
-    from a pipe, file, or string. It understands the language of it's
-    keystrokes ("artlang"). Simplest form of artscript is called "keypoem". 
-    A keypoem is a file containing keystrokes that arttime understands.
-    Some keypoems come with your installation. For instance, run
-        $ arttime -k learn.welcome_8b
-    to see a welcome keypoem. Keypoems can be used to save time and effort
-    needed to change arttime's state, even while arttime is already running.
-    They can also be used to create a storyboard-style sequence of art and
-    messages to tell a story. To load and run a keypoem while arttime is
-    running, press 'k' and enter a keypoem file.
-    
-    SCRIPT mode: When keystrokes are being fed from a pipe, file or string,
-    arttime runs in "SCRIPT" mode. Any keys pressed by the user while arttime
-    is in this mode are ignored. To immediately quit SCRIPT mode and transfer
-    control back to the keyboard, signal interrupt to arttime. That
-    can be achieved by pressing Ctrl-c on most terminals. You can also
-    pause and unpause artscript in SCRIPT mode by pressing 'p'.
-
-    Call for artists: Much good ascii art was created during web 1.0, 
-    but the artform declined after that. arttime intends to be a 
-    platform/repository for hosting/displaying ascii/ansi art,
-    as ascii/ansi does have its natural home on a terminal (instead
-    of a wall of an arts museum). In doing so it also encourages sharing art,
-    a not so common drift with the arrival of NFTs (where monkey stickers
-    are being priced at hundreds of thousands of US dollars).
-    The repository already provides a curated library of good ascii art
-    (mixed at times with computer-generated text version of digital images).
-    
-    Read LICENSE_ART for license of art files, and LICENSE_CODE for
-    license of code in arttime's repository.
-
-    Another note: This application was created at the outskirts of
-    Silicon Valley which has a buzzing scene of tarot-card readers (for 
-    unknown reasons). This inspired the author to add a key-binding to
-    emulate tarot-card experience. Pressing and holding a key ('o')
-    on the keyboard for a couple seconds makes the application settle 
-    on a randomly selected tarot art (emulating a tarot-card picking).
-    Instead if one presses and holds 'j', the application settles
-    on a randomly selected text art which is not a tarot card. In this way
-    arttime can serve as a free source of "receving messages from the
-    universe" or just a laugh. The author takes no responsibility for
-    the meaning one derives from such activity of playing with The Random.
-
-Layout:
-    The layout of arttime is simple. Text art with one line of message
-    and one line for clock/timer is kept horizontally and vertically
-    centered on the terminal, even when terminal size is changed.
-
-    Current time is always shown underlined, another time is either
-    start time (when arttime was started), goal time, goals up time
-    or paused time (when goals were paused). Layout of times shown
-    in the application:
-        - When the application starts, it displays:
-          <start_time> | time elapsed <elapsed_time> | <current_time>
-        - When one or more goals are set and pending, it shows:
-          <current_time> | [goal_id] time pending <pending_time> | <goal_time>
-        - When all goals have passed, it shows:
-          <current_time> | [goal_id] goal passed! <goals_up_time> | <goal_time>
-        - When goal/s are paused, it shows:
-          <paused_time> | [goal_id] goal PAUSED! <elapsed_time> | <current_time>
-        - When goal time is cleared, it shows:
-          <start_time> | time elapsed <elapsed_time> | <current_time>
-
-    Colors, underlines, and invert-coloring helps distinguish the
-    between times. [goal_id] is displayed optionally when there are
-    more than one goals and/or multiple sprints.
-
-Notifications:
-    Aside from inverting the colors of goal time to show that goal has been
-    reached, arttime aims to issue desktop notification for as many platforms
-    as possible. Currently it is tested to work work on macOS alone.
-    But it should work for Linux Desktop Enviornments with notify-send.
-    
-    Note: arttime is a suspendable (Ctrl-z), and continuable application.
-    The only caveat is that arttime won't issue notification if it is kept
-    suspended around the time when goal is reached. Notification will be 
-    deferred to the time when it is continued again. In future this behavior
-    might change, but for now if you expect to get notification, don't
-    suspend arttime.
-    
-Kebindings:
-    arttime is a text user interface (TUI), and is controlled by pressing
-    various keys on computer's keyboard. Passing/pressing 'h' to the
-    application toggles between currently displayed art, and a "help" art 
-    page that lists all of the keybindings. By default the application starts
-    in help/learn mode, and displays the help art. To disable this behavior
-    pass option --nolearn to arttime command, or put that in an alias for
-    arttime in your shell's configuration file.
-
-Options:
-    There are options to control art displayed at launch, colors, string
-    styling, setting a timer or pattern of timers, etc. 
-    arttime looks for text art files in a directory relative to
-    its own location (let's call it artdir):
-        artdir="<dir_of_arttime>/../share/arttime/textart/"
-
-    -a <name>   a-art art file name in artdir
-                (default: butterfly)
-    -b <name>   b-art art file name in artdir
-                (no default)
-    -t <str>    title message placed under art (default: line 1 in artfiles)
-    --random <all|tarot|notarot>
-                select and display a random art from arttime's collection
-                Meaning of value passed:
-                    all     : select from pool of all art files
-                    tarot   : select from only tarot art files
-                    notarot : select from all art except tarot
-                When passed, user should not pass option -a or -b
-    -g <str>    goal time. arttime calls alarm/countdown time as "goal time"
-                The reason it's both alarm/countdown time is either format
-                can be specified. Goal can be 1) "10s" from current time, or 
-                2) "May 3 1:15PM IST" (IST stands for Indian Standard Time).
-                Both variants should be entered without quotes.
-                Note: style 2) is currently only supported if "date" command
-                on the system points to GNU date. macOS/BSD's default date
-                command does not interpret arbitrary date time format
-                strings. In future some standard formats that work out of
-                the box with macOS/BSD default date command will be added.
-    --hours     start with 12 or 24 hour format. Value passed must be
-                either 24 or 12 (default: 12)
-
-    --ac <num>  art color*, value between 0-15, default 1
-    --tc <num>  title color*, value between 0-15, default 2
-    --theme <name>
-                when given it overrides above color options [light,dark]
-
-    --style <num>
-                style for title message and progressbar strings
-                For instance, value of 0 (--style 0) uses regular underline
-                value of 1 (--style 1) uses curly underlines, among other
-                things. Not all terminal emulators support curly underlines.
-                Possible values: [0,1] (default: 0)
-
+Option summary:
+    -a <name>
+        name of a-art file from artdir
+    -b <name>
+        name of b-art file from artdir
+    -t <str>
+        text placed under art
+    --random
+        select random art from arttime's collection
+    -g <time[;time;...;[loop[N]]]>
+         set timers
+    --hours <12|24>
+        show times in 12 or 24 hour format
     -k, --keypoem <name|file|fifo>
-                feed keystrokes from a keypoem file/fifo. The option accepts
-                either name of a file/fifo under keypoemdir:
-                    keypoemdir="<dir_of_arttime>/../share/arttime/keypoems/"
-                or full path to a keypoem file/fifo. Example values are:
-                learn.welcome_8b, story.batscovid_8b, timer.pomodoro4learn_8b
+        feed keystrokes from a keypoem file/fifo.
+    --ac <num>
+        art color, value between 0-15
+    --tc <num>
+        title color, value between 0-15
+    --theme <light|dark>
+        theme
+    --style <0|1>
+        style number
+    --pa <str>
+        char/str to denote pending part of progress bar
+    --pb <str>
+        char/str to denote complete part of progress bar
+    --pl <num>
+        progress bar length
+    --nolearn
+        don't show keybindings upon launch
+    --version
+        Print version number of arttime, and exit
+    -m, --man
+        Show arttime's manual, and exit
+    -h, --help
+        Print help string, and exit
 
-    --pa <str>  char/str to denote pending part of progress bar
-    --pb <str>  char/str to denote complete part of progress bar
-    --pl <num>  progress bar length
-                Note: progressbar pa/pb strings can be a multi character
-                long, though both pa/pb strings should be of same length.
-
-    --nolearn   By default arttime displays a keybinding help/learn art
-                page upon launch instead of showing some beautiful art.
-                Passing this option turns off that behavior, and makes
-                arttime display intended text art upon launch.
-                The help/learn page can still be toggled by pressing 'h'
-                at any time while application is running.
-    --version   Print version number of arttime, and exit
-    -h, --help  Print this help string, and exit
-
-    *Note: artfile can have ANSI color sequences embedded in it.
-    In that case, those escape sequences and their location override how
-    art/title is colored. Also, ANSI escape sequences embedded in an art
-    file can exceed the capability of underlying terminal emulator, in
-    which case colors will not be displayed correctly. A future option can
-    filter ANSI escape sequences for such terminals.
-
-Examples:
-    $ arttime
-        prints help/learn art on launch, pressing 'h' shows default a-art
-        (butterfly)
-    $ arttime --nolearn --random all
-        selects and displays a random art from entire arttime collection
-    $ arttime --nolearn -t "Hello World - Butterfly"
-        prints butterfly art with "Hello World - Butterfly" under
-        the trex ASCII art
-    $ printf "cccg10s\\nmHello World\\nh" | arttime
-        starts arttime in SCRIPT mode. Keystrokes are accepted from
-        pipe till pipe ends or user signals interrupt (mostly Ctrl-c),
-        and then control is transferred to keyboard. In this case,
-        the color of art is changed 3 times (sets it to blue),
-        set a 10 second timer, set message under art to "Hello World",
-        and toggle help page to show text art (default is a butterfly)
-        Note: Don't escape backslash of newline character \\n.
-    $ arttime -k learn.welcome_8b
-        starts arttime in SCRIPT mode. Keystrokes are read from
-        keypoem "learn.welcome_8b" in keypoemdir ('_8b' denotes 8 bytes/sec)
-        till the file ends or user signals interrupt (mostly Ctrl-c),
-        and then control is transferred to keyboard
-    $ arttime --nolearn -t "Hello World - Butterfly" --ac 2 --style 1
-        prints "Hello World — Butterfly" (en dash replaced with em dash)
-        under the butterfly ascii art colored in color 2 (green)
-    $ arttime --nolearn -a winnepooh -b winnepooh2
-        performs 2-framed animation, toggles between a-art and b-art
+For more information on arttime, try:
+    $ arttime -m
+    $ man arttime
 EOF
 echo $VAR
 }
 
-if [[ ! -z $help_arg[-1] ]]; then
-    printhelp
-    exit 0
-elif [[ ! -z $version_arg[-1] ]]; then
-    echo "$arttime_version"
-    exit 0
-fi
+# directories
+bindir="${0:A:h}/../../../bin"
+artdir="$bindir/../share/arttime/textart"
 
 unamestr="$(uname -a)"
 case "${unamestr}" in
@@ -375,9 +203,56 @@ case "${unamestr}" in
     *)          machine="UNKNOWN:${unamestr}";;
 esac
 
-# directories
-bindir="${0:A:h}/../../../bin"
-artdir="$bindir/../share/arttime/textart"
+if [[ ! -z $help_arg[-1] ]]; then
+    printhelp
+    exit 0
+elif [[ ! -z $man_arg[-1] ]]; then
+    setopt monitor
+    docdir="$bindir/../share/arttime/doc"
+    mandir="$bindir/../share/man/man1"
+    if [[ -f $docdir/arttime.1.ans ]]; then
+        if command -v less &>/dev/null; then
+            LESS="" exec less -SRKP 'Press q to quit\. Use arrow keys, j/k, PageDown, PageUp to scroll\.' $docdir/arttime.1.ans
+        elif command -v most &>/dev/null; then
+            COLORTERM=16 exec most $docdir/arttime.1.ans
+        else
+            exec cat $docdir/arttime.1.ans
+        fi
+    fi
+    if command -v less &>/dev/null; then
+        export LESS=""
+        export LESS_TERMCAP_md=$(echoti setaf 4; echoti bold)
+        export LESS_TERMCAP_us=$(echoti setaf 5; echoti sitm 2>/dev/null)
+        export LESS_TERMCAP_ue=$(echoti sgr0)
+    fi
+    export MANWIDTH=80
+    export MANROFFOPT=""
+    export GROFF_SGR=1
+    if [[ -f $mandir/arttime.1.gz ]]; then
+        if [[ $machine == "Linux" ]]; then
+            export MANPAGER="less -SRK" 
+            export MANLESS="Press q to quit\. Use arrow keys, j/k, PageDown, PageUp to scroll\."
+            exec command man --nh --nj $mandir/arttime.1.gz
+        elif [[ $machine == "Darwin" ]] && command -v gman &>/dev/null; then
+            export MANPAGER="less -SRK" 
+            export MANLESS="Press q to quit\. Use arrow keys, j/k, PageDown, PageUp to scroll\."
+            exec command gman --nh --nj $mandir/arttime.1.gz
+        elif command -v man &>/dev/null; then
+            export MANPAGER="less -SRKP \"Press q to quit\. Use arrow keys, j/k, PageDown, PageUp to scroll\.\"" 
+            exec command man $mandir/arttime.1.gz
+        else
+            echo "E: command 'man' not found"
+            exit 1
+        fi
+    else
+        echo "E: arttime manual not found"
+        exit 1
+    fi
+elif [[ ! -z $version_arg[-1] ]]; then
+    echo "$arttime_version"
+    exit 0
+fi
+
 
 function trimwhitespace {
     local var="$*"
@@ -688,12 +563,7 @@ if [[ -z $artname && ! -z $flipartname ]]; then
 fi
 
 if [[ ! -z $artname || ! -z $flipartname ]] && [[ ! -z $randomarg ]]; then
-    printf "E: if --random [all|tarot|notarot] is passed, a-art/b-art should not be passed\n"
-    exit 1
-fi
-
-if [[ $randomarg != "" && $randomarg != "all" && $randomarg != "tarot" && $randomarg != "notarot" ]]; then
-    printf "E: --random was passed \"$randomarg\", it can only be passed vales \"all\" or \"tarot\" or \"notarot\" \n"
+    printf "E: if --random is passed, a-art/b-art should not be\n"
     exit 1
 fi
 
@@ -740,13 +610,7 @@ if [[ ! -z $randomarg ]]; then
     prevdir=$PWD
     cd $artdir
     RANDOM="${EPOCHREALTIME#*.}"
-    if [[ $randomarg == "all" ]]; then
-        defaultshuffle=(*(.Nnoe['REPLY=$RANDOM']))
-    elif [[ $randomarg == "tarot" ]]; then
-        defaultshuffle=(tarot-*(.Nnoe['REPLY=$RANDOM']))
-    else
-        defaultshuffle=(^tarot-*(.Nnoe['REPLY=$RANDOM']))
-    fi
+    defaultshuffle=(^tarot-*(.Nnoe['REPLY=$RANDOM']))
     cd $prevdir
     defaultart="$defaultshuffle[1]"
 else
@@ -826,10 +690,10 @@ function keyfilefeed {
         fi            
     else
         if [[ $fileispipe == "1" ]]; then
-            coproc { trap -; while sysread -s1 -c1 -i0; do zselect -t $centidelay; printf "$REPLY"; done <>$keyfilepath }
+            coproc { trap -; while sysread -s1 -i0; do zselect -t $centidelay; printf "$REPLY"; done <>$keyfilepath }
             exec {streamfd}<&p
         else
-            coproc { trap -; while sysread -s1 -c1 -i0; do zselect -t $centidelay; printf "$REPLY"; done <$keyfilepath }
+            coproc { trap -; while sysread -s1 -i0; do zselect -t $centidelay; printf "$REPLY"; done <$keyfilepath }
             exec {streamfd}<&p
         fi
     fi
@@ -922,7 +786,7 @@ function readchar {
         read -r -s $timeout -k1 inputchar; retstatus="$?"
     else
         ERRNO=0
-        sysread -s1 -c1 $timeout -i$streamfd inputchar; retstatus=$?; reterrno=$ERRNO
+        sysread -s1 $timeout -i$streamfd inputchar; retstatus=$?; reterrno=$ERRNO
         case "$retstatus" in
             "0"|"4")
                 retstatus=0
@@ -973,14 +837,14 @@ function slurp {
     if [[ $streamclosed == "1" ]]; then
         while read -r -s -k1 -t0 slurpchar ; do : ; done 
     else
-        while sysread -s1 -c1 -t0 -i$streamfd slurpchar ; do : ; done
+        while sysread -s1 -t0 -i$streamfd slurpchar ; do : ; done
     fi
 }
 
 
-tputset_str=$(echoti rmam; echoti civis; echoti smcup)
+tputset_str=$(echoti rmam 2>/dev/null; echoti civis; echoti smcup)
 function tputset { printf "$tputset_str"; }
-tputreset_str=$(echoti rmcup; echoti smam; echoti cnorm)
+tputreset_str=$(echoti rmcup; echoti smam 2>/dev/null; echoti cnorm)
 function tputreset { printf "$tputreset_str"; }
 
 regexpart='[[:space:]]*([0-9]+)([dhms])[[:space:]]*'
@@ -1673,7 +1537,7 @@ function trapint_nonblocking {
 
 function trapint_blocking {
     if ! [[ $streamclosed == "1" ]]; then
-        while sysread -s1 -c1 -t0 -i$streamfd inputchar ; do : ; done
+        while sysread -s1 -t0 -i$streamfd inputchar ; do : ; done
         while read -r -s -k1 -t0 inputchar ; do : ; done
         inputchar=""
         inputstr=""
@@ -1781,7 +1645,7 @@ function artselector2 {
         echo $bartarray  | tr ' ' '\n' | column -c$(echoti cols)
         printf '\n'
     else
-        echoti smam
+        echoti smam 2>/dev/null
         printf '%s  ' $bartarray
         printf '\n\n'
     fi
@@ -2067,14 +1931,14 @@ function usr1input_handler {
             sttyresetext
             if [[ $commandkey = "x" ]]; then
                 $(printf $histcmd) $statedir/hist/aart.hist 1000 1000
-                artnametemp=$(ls $artdir | fzf-tmux --ansi --preview="$bindir/artprint -a {}  --ac $artcolor --tc $titlecolor  --style $style --theme $theme" -p 80%,80%  --preview-window=right,85%)
+                artnametemp=$(ls $artdir | fzf-tmux --ansi --preview="$bindir/artprint -a {}  --ac \"$artcolor\" --tc $titlecolor --height term --style $style --theme $theme" -p 80%,80%  --preview-window=right,85%)
             else
                 $(printf $histcmd) $statedir/hist/bart.hist 1000 1000
                 local restoredir=$PWD
                 cd $artdir
                 local tmpaart=$(getaart)
                 local aartheight=$(wc -l "${tmpaart}" | sed -n 's/^[[:space:]]*\([0-9]*\)[[:space:]]*.*$/\1/p')
-                artnametemp=$(wc -l * | sed -n '$d;s/^[[:space:]]*'"${aartheight}"'[[:space:]][[:space:]]*\(.*\)$/\1/p' | fzf-tmux --ansi --preview="$bindir/artprint -a {}  --ac $artcolor --tc $titlecolor  --style $style --theme $theme" -p 80%,80%  --preview-window=right,85%)
+                artnametemp=$(wc -l * | sed -n '$d;s/^[[:space:]]*'"${aartheight}"'[[:space:]][[:space:]]*\(.*\)$/\1/p' | fzf-tmux --ansi --preview="$bindir/artprint -a {}  --ac \"$artcolor\" --tc $titlecolor --height term --style $style --theme $theme" -p 80%,80%  --preview-window=right,85%)
                 cd $restoredir
             fi
             sttyset
@@ -2781,7 +2645,7 @@ function arttime_blocking {
             read -r -s -t $timetoepoch -k1 tmpusrinput; retstatus="$?"
         else
             ERRNO=0
-            sysread -s1 -c1 -t $timetoepoch -i$streamfd tmpusrinput; retstatus=$?; reterrno=$ERRNO
+            sysread -s1 -t $timetoepoch -i$streamfd tmpusrinput; retstatus=$?; reterrno=$ERRNO
             case "$retstatus" in
                 "0"|"4")
                     [[ $tempttychar != "p" ]] && read -r -s -k1 -t0 tempttychar
