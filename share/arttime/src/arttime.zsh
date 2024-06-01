@@ -952,11 +952,11 @@ function setnextgoal {
         goaltimestr="$goalentryarray[4]"
         local localgoaltimestr="$goaltimestr"
         goalstr="$goalentryarray[5]"
+        accumulatedsprinttime="0"
         if [[ $goalstr = "loop" ]]; then
             if [[ $localgoaltimestr = "-" ]]; then
                 local lastgoalptr="$goalptr"
                 goalsprint=$((goalsprint+1))
-                accumulatedsprinttime="0"
                 sprintstarttime=$(strftime '%s')
                 setgoals $sprintstarttime
                 goaldone="0"
@@ -964,7 +964,6 @@ function setnextgoal {
             elif [[ $localgoaltimestr -gt 1 ]]; then
                 local lastgoalptr="$goalptr"
                 goalsprint=$((goalsprint+1))
-                accumulatedsprinttime="0"
                 sprintstarttime=$(strftime '%s')
                 setgoals $sprintstarttime
                 goaldone="0"
@@ -2056,7 +2055,7 @@ function usr1input_handler {
                         pausegoals="1"
                         pausestart="$currenttimearray[1]"
                         pausestartstr="$currenttimearray[2]"
-                        accumulatedsprinttime=$((currenttimearray[1]-sprintstarttime))
+                        accumulatedsprinttime=$((accumulatedsprinttime+currenttimearray[1]-sprintstarttime))
                         goaltime=""
                     fi
                 else
